@@ -1,0 +1,455 @@
+body.light {
+  font-family: helvetica, arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('images/nas.jpg') center/cover no-repeat;
+  background-size: cover;
+}
+body.dark {
+  font-family: helvetica, arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('images/nas.jpg') center/cover no-repeat;
+  background-size: cover;
+}
+body.dark::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 30, 20, 0.25); /* <-- Adjust tint color and opacity here */
+  pointer-events: none;
+  z-index: 0;
+  transition: ease-in-out 0.5s;
+}
+body.light::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: rgba(255, 230, 200, 0.15); /* soft purple */ /* <-- Adjust tint color and opacity here */
+  pointer-events: none;
+  z-index: 0;
+  transition: ease-in-out 0.5s;
+}
+/* Toggle Button */
+.toggle-theme {
+  background: none;   /* remove default button background */
+  border: none;       /* remove border */
+  padding: 0;         /* remove extra space */
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;  /* optional: center the SVG nicely */
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 45px;
+  left: 160px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+.toggle-theme:hover {
+  transform: scale(1.1) rotate(10deg);
+}
+
+/* Icon Styling */
+.toggle-theme svg {
+  width: 32px;
+  height: 32px;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.4,2,.6,1);
+  position: absolute;
+}
+
+/* Show/hide animation */
+#sunIcon,
+#moonIcon {
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+  pointer-events: none;
+}
+
+#sunIcon.show,
+#moonIcon.show {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  pointer-events: all;
+}
+
+body.light header {
+  position: relative;
+  background-image: linear-gradient(to top left, #9cff6e, #FFFFFF);
+  background-size: 200% 100%;
+  animation: moveGradient 5s ease infinite;
+  padding: 20px;
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+body.dark header {
+  position: relative;
+  background-image: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background-size: 200% 100%;
+  animation: moveGradient 5s ease infinite;
+  padding: 20px;
+  text-align: center;
+  color: #f0f0f0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.header-img {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 105px;
+  width: auto;
+}
+body.light main {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  color: #1A1A1A;
+  overflow: hidden;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  z-index: 1;
+  position: relative; /* Ensure main content is above the background */
+  transition: ease-in-out 0.5s;
+}
+body.dark main {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  background: rgba(28, 28, 28, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  color: #EDEDED;
+  overflow: hidden;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  z-index: 1;
+  position: relative;
+  transition: ease-in-out 0.5s;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-family: fantasy;
+}
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.info-box {
+  position: absolute;
+  pointer-events: none;
+  background: #000000be;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s, font-size 0.25s, padding 0.25s;
+}
+
+/* From Uiverse.io by StealthWorm */ 
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 13rem;
+  overflow: hidden;
+  height: 3rem;
+  background-size: 300% 300%;
+  cursor: pointer;
+  backdrop-filter: blur(1rem);
+  border-radius: 5rem;
+  transition: 0.5s;
+  animation: gradient_301 5s ease infinite;
+  border: double 4px transparent;
+  background-image: linear-gradient(#212121, #212121),
+    linear-gradient(
+      137.48deg,
+      #ffdb3b 10%,
+      #fe53bb 45%,
+      #8f51ea 67%,
+      #0044ff 87%
+    );
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
+#container-stars {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transition: 0.5s;
+  backdrop-filter: blur(1rem);
+  border-radius: 5rem;
+}
+
+.btn strong {
+  z-index: 2;
+  font-family: "Avalors Personal Use";
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: #ffffff;
+  text-shadow: 0 0 4px white;
+}
+
+#glow {
+  position: absolute;
+  display: flex;
+  width: 12rem;
+}
+
+.circle {
+  width: 100%;
+  height: 30px;
+  filter: blur(2rem);
+  animation: pulse_3011 4s infinite;
+  z-index: -1;
+}
+
+.circle:nth-of-type(1) {
+  background: rgba(254, 83, 186, 0.636);
+}
+
+.circle:nth-of-type(2) {
+  background: rgba(142, 81, 234, 0.704);
+}
+
+.btn:hover #container-stars {
+  z-index: 1;
+  background-color: #212121;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+.btn:active {
+  border: double 4px #fe53bb;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  animation: none;
+}
+
+.btn:active .circle {
+  background: #fe53bb;
+}
+
+#stars {
+  position: relative;
+  background: transparent;
+  width: 200rem;
+  height: 200rem;
+}
+
+#stars::after {
+  content: "";
+  position: absolute;
+  top: -10rem;
+  left: -100rem;
+  width: 100%;
+  height: 100%;
+  animation: animStarRotate 90s linear infinite;
+}
+
+#stars::after {
+  background-image: radial-gradient(#ffffff 1px, transparent 1%);
+  background-size: 50px 50px;
+}
+
+#stars::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 170%;
+  height: 500%;
+  animation: animStar 60s linear infinite;
+}
+
+#stars::before {
+  background-image: radial-gradient(#ffffff 1px, transparent 1%);
+  background-size: 50px 50px;
+  opacity: 0.5;
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-135rem);
+  }
+}
+
+@keyframes animStarRotate {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0);
+  }
+}
+
+@keyframes gradient_301 {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse_3011 {
+  0% {
+    transform: scale(0.75);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(0.75);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+body.light .menu-btn {
+    background: #C7CEEA;
+    color: #1A1A1A;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: ease-in-out 0.5s;
+}
+body.dark .menu-btn {
+    background: #1A1A2E;
+    color: #BB86FC;
+    border: none;
+    box-shadow: 0 2px 8px #bb86fc27;
+    transition: ease-in-out 0.5s;
+}
+body.dark .menu-btn:hover {
+    box-shadow: 0 2px 8px #BB86FC;
+    transition: ease-in-out 0.2s;
+}
+.menu-btn {
+    border: none;
+    padding: 8px 16px;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+}
+.menu-container {
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    border-radius: 8px;
+    min-width: 140px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    flex-direction: column;
+}
+body.light .menu-dropdown {
+  background:#c7ceeac2;
+}
+body.light .menu-dropdown a {
+    color: #1A1A1A;
+}
+body.dark .menu-dropdown {
+  background: #1a1a2ece;
+}
+body.dark .menu-dropdown a {
+    color: #BB86FC;
+}
+.menu-dropdown a {
+    text-decoration: none;
+    padding: 10px 18px;
+    display: block;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.menu-dropdown a:last-child {
+    border-bottom: none;
+}
+.menu-container.open .menu-dropdown {
+    display: flex;
+}
+
+/* Add to style.css for styling the button */
+.back-btn {
+    display: inline-block;
+    margin: 2rem auto 0 auto;
+    padding: 10px 22px;
+    background: #400472;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+}
+.back-btn:hover {
+    background: #fac2ff;
+}
+body.disable-theme-transition *,
+body.disable-theme-transition, 
+body.disable-theme-transition *::before, 
+body.disable-theme-transition *::after {
+  transition: none !important;
+}
