@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
         "Kawasan Gazebo Dhuha dan Meja Batu": "Kawasan rehat dan belajar luar kelas.",
         "Kebun": "Kebun sekolah untuk projek pertanian.",
         "Takraw": "Gelanggang sepak takraw.",
-        "Futsal / Bola Jaring / Bola Baling": "Gelanggang pelbagai guna.",
+        "Futsal / Bola Jaring / Bola Baling": "Gelanggang pelbagai guna.<hr><img src='images/court futsal.jpg' style='width:300px'><br><img src='images/boja.jpg' style='width:300px'>",
         "Bola Tampar": "Gelanggang bola tampar.",
-        "Bola Keranjang": "Gelanggang bola keranjang.",
-        "Asrama Puteri": "Asrama untuk pelajar perempuan.",
-        "Dewan Seri Balau / Dewan Makan": "Dewan makan dan dewan serbaguna.",
-        "Asrama Putera": "Asrama untuk pelajar lelaki.",
+        "Bola Keranjang": "Gelanggang bola keranjang.<hr><img src='images/basketball.jpg' style='width:300px'>",
+        "Asrama Puteri": "Asrama untuk pelajar perempuan.<hr><img src='images/pelanasrama2.jpg' style='width:500px'>",
+        "Dewan Seri Balau / Dewan Makan": "Dewan makan dan dewan serbaguna.<hr><img src='images/makanberadat.jpg' style='width:300px'>",
+        "Asrama Putera": "Asrama untuk pelajar lelaki.<hr><img src='images/pelanasrama2.jpg' style='width:500px'>",
         "Dataran Hicom": "Dataran untuk perhimpunan dan aktiviti luar.",
         "Pondok": "Pondok rehat pelajar.",
         "Hutan PIBG": "Hutan PIBG: Kawasan hutan untuk aktiviti luar dan ekologi. <hr><img src='images/hutanpibg.jpg' style='width:300px'>", 
@@ -128,7 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!infoBox) {
         infoBox = document.createElement('div');
         infoBox.className = 'info-box';
+        // make sure it does NOT receive pointer events while used as hover tooltip
+        infoBox.style.pointerEvents = 'none';   // changed from 'auto' to 'none'
+        infoBox.style.position = 'absolute';
+        infoBox.style.zIndex = '10000';
         document.body.appendChild(infoBox);
+
+        // prevent clicks inside infoBox from propagating to document (still safe to have)
+        infoBox.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+        });
     }
 
     // Helper to get center of poly/rect
@@ -231,14 +240,39 @@ document.addEventListener('DOMContentLoaded', () => {
             if (frame <= maxFrames) {
                 animId = requestAnimationFrame(animateGlow);
             } else {
-                outlineCanvas.style.transition = "opacity 3s ease 2s";
+                outlineCanvas.style.transition = "opacity 3s ease 1s";
                 outlineCanvas.style.opacity = "0";
-                setTimeout(() => { if (outlineCanvas) outlineCanvas.remove(); }, 5000);
+                setTimeout(() => { if (outlineCanvas) outlineCanvas.remove(); }, 4000);
             }
         }
 
         outlineCanvas.style.opacity = "1";
         animateGlow();
+    }
+
+    // New helper to close the expanded info box and remove the glow
+    let suppressHover = false; // when true, hover/tooltips won't re-open after X-close
+    function closeInfo() {
+        infoBox.style.opacity = 0;
+        infoBox.style.display = 'none';
+        infoBox.style.left = '-9999px';
+        infoBox.style.top = '-9999px';
+        infoBox.style.fontSize = "1rem";
+        infoBox.style.padding = "8px 14px";
+        infoBox.style.pointerEvents = 'none'; // ensure hover works again after close
+        enlarged = false;
+        suppressHover = true; // temporarily suppress immediate hover reopen
+
+        // Clear outline if present
+        if (outlineCanvas) {
+            outlineCanvas.remove();
+            outlineCanvas = null;
+        }
+
+        // Allow hover/tooltips again after a short delay so user can move mouse
+        setTimeout(() => {
+            suppressHover = false;
+        }, 250);
     }
 
     let enlarged = false;
@@ -268,23 +302,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         area.addEventListener('mousemove', (e) => {
-            if (!enlarged) {
-                infoBox.innerHTML = `<strong>${areaInfo[area.alt] || area.title || "Info"}</strong>`;
-                infoBox.style.opacity = 1;
-                infoBox.style.fontSize = "1rem";
-                infoBox.style.padding = "8px 14px";
-                infoBox.style.left = "-9999px";
-                infoBox.style.top = "-9999px";
-                infoBox.style.display = "block";
-                const boxRect = infoBox.getBoundingClientRect();
-                let x = e.pageX + 15;
-                let y = e.pageY + 15;
-                if (x + boxRect.width > window.innerWidth) x = window.innerWidth - boxRect.width - 10;
-                if (y + boxRect.height > window.innerHeight) y = e.pageY - boxRect.height - 15;
-                if (y < 0) y = 10;
-                infoBox.style.left = x + 'px';
-                infoBox.style.top = y + 'px';
-            }
+            // do not show hover while an area is enlarged OR if user closed with X
+            if (enlarged || suppressHover) return;
+            infoBox.innerHTML = `<strong>${areaInfo[area.alt] || area.title || "Info"}</strong>`;
+            infoBox.style.opacity = 1;
+            infoBox.style.display = "block";
+            infoBox.style.fontSize = "1rem";
+            infoBox.style.padding = "8px 14px";
+            infoBox.style.left = "-9999px";
+            infoBox.style.top = "-9999px";
+            const boxRect = infoBox.getBoundingClientRect();
+            let x = e.pageX + 15;
+            let y = e.pageY + 15;
+            if (x + boxRect.width > window.innerWidth) x = window.innerWidth - boxRect.width - 10;
+            if (y + boxRect.height > window.innerHeight) y = e.pageY - boxRect.height - 15;
+            if (y < 0) y = 10;
+            infoBox.style.left = x + 'px';
+            infoBox.style.top = y + 'px';
         });
         area.addEventListener('mouseleave', () => {
             if (!enlarged) infoBox.style.opacity = 0;
@@ -292,20 +326,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         area.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation(); // <- prevent the opening click from bubbling and immediately closing
+            // clicking an area to open resets the suppressHover guard
+            suppressHover = false;
             if (!enlarged) {
+                // add a close button to the expanded info box
                 infoBox.innerHTML = `
+                    <button class="info-close" aria-label="Close" style="
+                        position:absolute;top:8px;right:8px;
+                        background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;
+                        pointer-events:auto;
+                    ">✕</button>
                     <strong>${areaInfo[area.alt] || area.title || "Info"}</strong>
                     <br>
                     <span style="font-size:0.95rem;display:block;margin-top:8px;color:#eee;">
                         ${areaMoreInfo[area.alt] || ""}
                     </span>
                 `;
+                // ensure the info box is displayed and positioned
                 infoBox.style.opacity = 1;
+                infoBox.style.display = "block";
                 infoBox.style.fontSize = "1.3rem";
                 infoBox.style.padding = "16px 22px";
                 infoBox.style.left = "-9999px";
                 infoBox.style.top = "-9999px";
-                infoBox.style.display = "block";
+                // enable clicks on the info box (so the X button works)
+                infoBox.style.pointerEvents = 'auto';
+                // position & zIndex already set when created
                 const boxRect = infoBox.getBoundingClientRect();
                 let x = e.pageX + 15;
                 let y = e.pageY + 15;
@@ -316,6 +363,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 infoBox.style.top = y + 'px';
                 enlarged = true;
 
+                // wire up the close button (stop propagation so click doesn't affect other handlers)
+                const closeBtn = infoBox.querySelector('.info-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        closeInfo();
+                    });
+                }
+
+                // Make images inside the expanded info box open fullscreen on click
+                const imgs = infoBox.querySelectorAll('img');
+                imgs.forEach(img => {
+                    img.style.cursor = 'zoom-in';
+                    // remove previous listeners if any (defensive)
+                    img.replaceWith(img.cloneNode(true));
+                });
+                // re-query after replacement to attach fresh listeners
+                infoBox.querySelectorAll('img').forEach(img => {
+                    img.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        openImageFullscreen(img);
+                    });
+                });
+
                 // Only show glow if NOT kawasan sekolah or kawasan asrama in main map
                 if (
                     (mapType === 'main' && area.alt !== "Sekolah" && area.alt !== "Kawasan Asrama SAKTI") ||
@@ -324,21 +395,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 ) {
                     showOutlineGlow(area, img);
                 }
-            } else {
-                infoBox.style.opacity = 0;
-                infoBox.style.fontSize = "1rem";
-                infoBox.style.padding = "8px 14px";
-                enlarged = false;
             }
+            // when enlarged, clicking the area (or elsewhere) will NOT close the info box
         });
     });
 
+    // Close the expanded info box when clicking anywhere outside it
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('area') && enlarged) {
-            infoBox.style.opacity = 0;
-            infoBox.style.fontSize = "1rem";
-            infoBox.style.padding = "8px 14px";
-            enlarged = false;
+        if (enlarged && infoBox && !infoBox.contains(e.target)) {
+            closeInfo();
         }
     });
 });
@@ -395,3 +460,55 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('disable-theme-transition');
     }, 50);
 });
+
+function openImageFullscreen(imgEl) {
+    // Try Fullscreen API on a wrapper (better for consistent background)
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.background = 'rgba(0,0,0,0.95)';
+    wrapper.style.width = '100%';
+    wrapper.style.height = '100%';
+    wrapper.style.position = 'fixed';
+    wrapper.style.top = '0';
+    wrapper.style.left = '0';
+    wrapper.style.zIndex = '999999';
+    wrapper.style.cursor = 'zoom-out';
+
+    const clone = document.createElement('img');
+    clone.src = imgEl.src;
+    clone.style.maxWidth = '95%';
+    clone.style.maxHeight = '95%';
+    clone.style.boxShadow = '0 10px 30px rgba(0,0,0,0.6)';
+    wrapper.appendChild(clone);
+
+    // Close helper
+    function removeWrapper() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(()=>{}); // ignore errors
+        }
+        if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+        document.removeEventListener('keydown', onKey);
+        document.removeEventListener('fullscreenchange', onFsChange);
+    }
+    function onKey(e) {
+        if (e.key === 'Escape') removeWrapper();
+    }
+    function onFsChange() {
+        if (!document.fullscreenElement) {
+            // fullscreen exited, ensure wrapper removed
+            removeWrapper();
+        }
+    }
+
+    // Fallback: append wrapper and try to request fullscreen on it
+    document.body.appendChild(wrapper);
+    wrapper.addEventListener('click', removeWrapper);
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('fullscreenchange', onFsChange);
+
+    // Try to request fullscreen; if not allowed or rejected, overlay remains and is clickable
+    const req = wrapper.requestFullscreen ? wrapper.requestFullscreen() : Promise.reject();
+    req.catch(()=>{ /* ignore rejection, overlay is already visible */ });
+}
