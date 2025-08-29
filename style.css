@@ -453,3 +453,38 @@ body.disable-theme-transition *::before,
 body.disable-theme-transition *::after {
   transition: none !important;
 }
+
+/* Add to style.css */
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+#locationSearch {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  font-size: 1rem;
+  width: 220px;
+  transition: border 0.2s;
+}
+#locationSearch:focus {
+  border: 1.5px solid #8f51ea;
+  outline: none;
+}
+#searchBtn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #8f51ea;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#searchBtn:hover {
+  background: #ffdb3b;
+  color: #222;
+}

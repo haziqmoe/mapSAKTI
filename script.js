@@ -512,3 +512,40 @@ function openImageFullscreen(imgEl) {
     const req = wrapper.requestFullscreen ? wrapper.requestFullscreen() : Promise.reject();
     req.catch(()=>{ /* ignore rejection, overlay is already visible */ });
 }
+
+// Add to script.js, after DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('locationSearch');
+    const searchBtn = document.getElementById('searchBtn');
+    if (!searchInput || !searchBtn) return;
+
+    function highlightAreaByName(name) {
+        const mapAreas = document.querySelectorAll('area');
+        let found = false;
+        mapAreas.forEach(area => {
+            if (
+                area.alt.toLowerCase().includes(name.toLowerCase()) ||
+                (area.title && area.title.toLowerCase().includes(name.toLowerCase()))
+            ) {
+                area.scrollIntoView({behavior: "smooth", block: "center"});
+                area.dispatchEvent(new MouseEvent('mousemove', {bubbles:true, clientX:0, clientY:0}));
+                area.dispatchEvent(new MouseEvent('click', {bubbles:true, clientX:0, clientY:0}));
+                found = true;
+            }
+        });
+        if (!found) {
+            alert("Lokasi tidak dijumpai!");
+        }
+    }
+
+    searchBtn.addEventListener('click', () => {
+        if (searchInput.value.trim()) {
+            highlightAreaByName(searchInput.value.trim());
+        }
+    });
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && searchInput.value.trim()) {
+            highlightAreaByName(searchInput.value.trim());
+        }
+    });
+});
